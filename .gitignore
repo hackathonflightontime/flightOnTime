@@ -1,0 +1,26 @@
+# Java / Maven
+target/
+*.iml
+*.log
+
+# IntelliJ / VSCode
+.idea/
+.vscode/
+*.class
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+
+# DS
+datascience/notebooks/.ipynb_checkpoints/
+*.joblib
+
+# Sistema
+.DS_Store
+Thumbs.db
