@@ -42,7 +42,7 @@ backend
 
 # 🔧 3. Tecnologias Utilizadas
 
-* **Java 21**
+* **Java 17**
 * **Spring Boot 3.2.x**
 * Spring Web
 * Spring Validation
