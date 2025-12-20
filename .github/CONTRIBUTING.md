@@ -87,7 +87,7 @@ Usamos **Conventional Commits** simplificado.
 
 * `feat:` nova funcionalidade
 * `fix:` correção
-* `docs:` documentação
+* `docs:` documenctação
 * `refactor:` refatoração sem mudança de comportamento
 * `test:` adição/modificação de testes
 * `chore:` mudanças de build, docker, configs

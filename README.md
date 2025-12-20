@@ -6,7 +6,7 @@ Este projeto foi desenvolvido como solução para o desafio *FlightOnTime*, cujo
 
 ---
 
-# 📘 1. Arquitetura Geral do Projeto hacatoon
+# 📘 1. Arquitetura Geral do Projeto
 
 ```
 Usuário → API Java (Spring Boot) → Microserviço Python (FastAPI) →
