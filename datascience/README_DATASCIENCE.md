@@ -8,7 +8,8 @@ Módulo responsável por análise de dados, preparação, criação do modelo pr
 Ingestão: Coleta de dados brutos e armazenamento em Google Cloud Storage.
 Processamento & ETL: Limpeza e estruturação dos dados utilizando BigQuery e SQL.
 Ciência de Dados & ML: Desenvolvimento do modelo de classificação (EDA, Feature Engineering e Treinamento).
-Entrega & Integração: Exportação do artefato final para disponibilização via API."
+Entrega & Integração: Exportação do artefato final para disponibilização via API.
+
 O objetivo é prever se um voo será **Pontual (0)** ou **Atrasado (1)** com base em seus atributos.
 
 ---
