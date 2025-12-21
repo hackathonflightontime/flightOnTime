@@ -2,6 +2,7 @@ package com.flightontime.service;
 
 import com.flightontime.dto.VooRequest;
 import com.flightontime.dto.VooResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,16 +12,21 @@ import java.time.LocalDateTime;
 public class VooService {
 
     private final WebClient.Builder webClient;
+    private final String microserviceUrl;
 
-    public VooService(WebClient.Builder webClient) {
+    public VooService(WebClient.Builder webClient,
+                      @Value("${app.ms.url}") String microserviceUrl) {
         this.webClient = webClient;
+        this.microserviceUrl = microserviceUrl;
+
     }
 
     public VooResponse prever(VooRequest request) {
 
         Double probabilidade = webClient.build()
                 .post()
-                .uri("http://localhost:5000/predict")
+                .uri(microserviceUrl)
+
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(Double.class)
