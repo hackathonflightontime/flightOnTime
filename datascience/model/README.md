@@ -1,22 +1,48 @@
-# Modelo de Predição Treinado - FlightOnTime
+# ✈️ FlightOnTime - Serviço de Predição
 
-Este diretório contém o acesso ao artefato final do modelo de inteligência artificial desenvolvido para a predição de atrasos de voos.
+Este diretório contém a inteligência do projeto FlightOnTime, incluindo o modelo preditivo e a API de serviço.
 
-### 🔗 Download do Modelo
-Devido a limitações de processamento de arquivos binários (.joblib) via interface web do GitHub (Erro 400), o modelo foi disponibilizado via Google Drive para garantir a integridade do arquivo:
+## 🔗 Downloads Obrigatórios (Arquivos Pesados)
 
-👉 [**Baixar modelo_atraso_voo.joblib**](https://drive.google.com/file/d/1jwScHPdoveOBGXMXaugEnDdGgqQtursp/view?usp=sharing)
+Para garantir a performance do repositório, os arquivos binários estão hospedados no Google Drive. Baixe ambos e coloque-os na pasta `/model`:
+
+* 📦 [**Baixar: modelo_atraso_voo.joblib**](https://drive.google.com/file/d/1jwScHPdoveOBGXMXaugEnDdGgqQtursp/view?usp=sharing)
+* 📑 [**Baixar: encoders_voo.joblib**](https://drive.google.com/file/d/10I1svImKYBN_PSE-OgoKIYEqD8jWQdpa/view?usp=sharing)
 
 ---
 
-### 🛠️ Como carregar o modelo (Python)
-Para integrar este modelo em sua aplicação ou API, certifique-se de ter a biblioteca `joblib` instalada e utilize o código abaixo:
+## 📋 Contrato de Dados (JSON esperado pela API)
+
+O serviço `/predict-model` espera receber um objeto JSON com a estrutura abaixo. **Atenção:** Os campos `estado_origem` e `estado_destino` são obrigatórios para a precisão do modelo.
+
+| Campo | Descrição | Exemplo |
+| :--- | :--- | :--- |
+| `companhia` | Sigla da linha aérea | "AA" |
+| `origem` | Código IATA do aeroporto de origem | "JFK" |
+| `estado_origem` | Sigla do estado (UF) de origem | "NY" |
+| `destino` | Código IATA do aeroporto de destino | "LAX" |
+| `estado_destino` | Sigla do estado (UF) de destino | "CA" |
+| `distancia` | Distância total do voo (numérico) | 3977.0 |
+| `hora_partida_prevista` | Horário (formato HHMM) | 1430 |
+
+---
+
+## 🛠️ Exemplo de Implementação (Python)
+
+Abaixo, o exemplo de como o serviço processa os dados usando o modelo e o tradutor (encoder) com a lógica de resiliência:
 
 ```python
 import joblib
+import pandas as pd
 
-# Após realizar o download do arquivo, carregue-o no seu ambiente
-modelo_final = joblib.load('modelo_atraso_voo.joblib')
+# Carregar os artefatos
+modelo = joblib.load('model/modelo_atraso_voo.joblib')
+encoders = joblib.load('model/encoders_voo.joblib')
 
-# O modelo está pronto para realizar predições
-# predicao = modelo_final.predict(dados_de_entrada)
+def predict(dados):
+    df = pd.DataFrame([dados])
+    # Mágica da Tradução (Blindagem contra dados novos)
+    for col, le in encoders.items():
+        valor = str(df[col].values[0])
+        df[col] = le.transform([valor]) if valor in le.classes_ else -1
+    return modelo.predict(df)
