@@ -24,3 +24,9 @@ datascience/notebooks/.ipynb_checkpoints/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Build / Output
+out/
+
+# Arquivos grandes / datasets
+*.zip
