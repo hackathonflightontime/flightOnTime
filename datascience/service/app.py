@@ -42,7 +42,7 @@ def preprocess(voo: Voo) -> pd.DataFrame:
 
     data = {
         "month": dt.month,
-        "day_of_week": dt.weekday() + 1,  # segunda=0 → 1, domingo=6 → 7
+        "day_of_week": dt.weekday(),  # segunda=0, domingo = 6
         "op_unique_carrier": mapping["op_unique_carrier"].get(voo.companhia, -1),
         "origin": mapping["origin"].get(voo.origem, -1),
         "origin_state_nm": mapping["origin_state_nm"].get(voo.estado_origem, -1),
