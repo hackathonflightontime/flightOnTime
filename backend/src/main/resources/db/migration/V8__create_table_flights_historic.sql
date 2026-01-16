@@ -1,5 +1,5 @@
 CREATE TABLE flights_historic (
-    id SERIAL PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     companhia VARCHAR(2) NOT NULL,        -- op_unique_carrier (ex.: AA, DL, UA)
     origem VARCHAR(3) NOT NULL,           -- IATA origin (ex.: JFK, LAX)
     estado_origem VARCHAR(50) NOT NULL,   -- origin_state_nm
