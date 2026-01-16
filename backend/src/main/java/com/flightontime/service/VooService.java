@@ -31,6 +31,7 @@ public class VooService {
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(Double.class)
+                    .timeout(java.time.Duration.ofSeconds(5))
                     .block();
 
             if (probability == null) {
@@ -41,7 +42,7 @@ public class VooService {
             return new VooResponse(prediction, probability);
 
         } catch (Exception ex) {
-            throw new PredictionServiceUnavailableException("Serviço de predição indisponível");
+            throw new PredictionServiceUnavailableException("Serviço de predição indisponível", ex);
         }
     }
 }
