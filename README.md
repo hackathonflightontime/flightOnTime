@@ -62,7 +62,7 @@ flight-on-time
 * Spring Data JPA
 * H2 (dev) + PostgreSQL 16 (prod / OCI)
 * OpenAPI (Swagger)
-* Docker / Docker Compose
+* Docker / Docker Compose.
 
 ### 🧠 **Data Science**
 
