@@ -1,29 +1,74 @@
-# 🧪 Testes Unitários - FlightOnTime Backend
+🧪 Testes – FlightOnTime Backend
 
-## 📊 RESUMO FINAL
-- **Total de testes:** 10 ✅
-- **Todos passando:** SIM
-- **Build Status:** SUCCESS
-- **Data:** 14/01/2026
+📊 RESUMO FINAL
 
-## ✅ TESTES IMPLEMENTADOS
+Total de testes: 11
 
-### 1. Testes de DTOs (4 testes)
-- VooRequestTest.java - 1 teste
-- VooResponseTest.java - 3 testes
+Status: Todos passando
 
-### 2. Testes de Service (2 testes)
-- VooServiceTest.java - 2 testes
+Build: SUCCESS
 
-### 3. Testes de Controller (2 testes)
-- SimpleControllerTest.java - 2 testes
+Última atualização: 18/01/2026
 
-### 4. Testes de Integração (2 testes)
-- IntegrationTest.java - 2 testes
+Os testes cobrem DTOs, camada de serviço, controllers e endpoints reais da API, garantindo o funcionamento do contrato HTTP do backend.
+
+✅ TESTES IMPLEMENTADOS
+
+1. Testes de DTOs (4 testes)
+
+VooRequestTest.java – 1 teste
+
+VooResponseTest.java – 3 testes
+
+Validação de getters, setters e consistência dos objetos de transferência de dados utilizados nos endpoints.
+
+2. Testes de Service (2 testes)
+
+VooServiceTest.java – 2 testes
+
+Testes unitários da camada de serviço, isolando regras de negócio com uso de Mockito.
+
+3. Testes de Controller / Endpoints (4 testes)
+
+SimpleControllerTest.java – 2 testes
+
+PredictControllerTest.java – 2 testes
+
+Endpoints cobertos:
+
+🔹 POST /predict
+
+Retorna 200 OK para requisição válida
+
+Retorna 400 Bad Request para payload inválido
+
+Os testes de endpoint utilizam:
+
+@WebMvcTest
+
+MockMvc
+
+Service mockado com @MockBean
+
+Esses testes validam:
+
+Comportamento HTTP da API
+
+Validação do payload de entrada
+
+Status HTTP retornado
+
+Estrutura do JSON de resposta
+
+O objetivo é garantir o contrato da API, sem dependência de banco de dados ou microserviço Python.
+
+4. Testes de Integração (1 teste)
+
+IntegrationTest.java – 1 teste
+
+Validação do carregamento do contexto da aplicação e integração básica entre camadas.
 
 ## 🚀 COMO EXECUTAR
-
-```bash
 
 cd backend
 mvn test
@@ -38,11 +83,13 @@ src/test/java/com/flightontime/
 │   ├── service/
 │   │   └── VooServiceTest.java
 │   └── controller/
-│       └── SimpleControllerTest.java
+│       ├── SimpleControllerTest.java
+│       └── PredictControllerTest.java
 └── integration/
     └── IntegrationTest.java
 
-🔧 TECNOLOGIAS
+
+🔧 TECNOLOGIAS UTILIZADAS
 
 JUnit 5
 
@@ -50,25 +97,25 @@ Mockito
 
 Spring Boot Test
 
+MockMvc
+
 Maven Surefire
 
 
-📈 PRÓXIMOS PASSOS
+## 📈 PRÓXIMOS PASSOS (OPCIONAIS)
 
-Expandir testes de Controller para todos endpoints
+Os itens abaixo representam evoluções possíveis do projeto, fora do escopo atual de testes:
 
-Implementar testes com banco de dados H2
-
-Adicionar testes de integração com o microserviço Python
-
-Configurar relatório de cobertura de código
+- Expansão da cobertura de testes de endpoint para novos contratos da API
+- Implementação de testes com banco de dados em memória (H2)
+- Testes de integração com o microserviço Python (FastAPI)
+- Geração de relatório de cobertura de código (JaCoCo)
 
 📸 EVIDÊNCIAS
 
-Build Success com 10 testes passando
+Build SUCCESS
 
 Relatórios disponíveis em target/surefire-reports/
 
-Console mostrando Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
-
-Testes validados em 14/01/2026
+Console:
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
