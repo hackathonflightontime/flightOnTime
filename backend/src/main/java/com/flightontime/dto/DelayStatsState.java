@@ -8,19 +8,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(
-    description = "Estatísticas de atraso agrupadas por estado",
-    example = """
-    {
-      "state": "Georgia",
-      "totalFlights": 120,
-      "average": 0.42,
-      "min": 0.05,
-      "max": 0.91,
-      "stdDev": 0.18
-    }
-    """
-)
+@Schema(description = "Estatísticas de atraso agrupadas por estado", example = """
+        {
+          "state": "Georgia",
+          "totalFlights": 120,
+          "average": 0.42,
+          "min": 0.05,
+          "max": 0.91,
+          "stdDev": 0.18
+        }
+        """)
 public class DelayStatsState {
 
     @Schema(description = "Estado analisado", example = "Georgia")

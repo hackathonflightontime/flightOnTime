@@ -19,7 +19,7 @@ public class VooResponse {
     @Schema(description = "Classificação da previsão do voo", example = "Pontual")
     @JsonProperty("previsao")
     private String prediction;
-    
+
     @Schema(description = "Probabilidade associada à previsão (0 a 1)", example = "0.18")
     @JsonProperty("probabilidade")
     private double probability;
