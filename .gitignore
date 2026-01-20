@@ -1,12 +1,12 @@
 # Java / Maven
-target/
+**/target/
 *.iml
 *.log
 
 # IntelliJ / VSCode
 .idea/
 .vscode/
-*.class
+**/*.class
 
 # Python
 __pycache__/

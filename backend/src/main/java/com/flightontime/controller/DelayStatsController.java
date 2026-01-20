@@ -31,6 +31,7 @@ public class DelayStatsController {
         @ApiResponse(responseCode = "200", description = "Estatísticas calculadas com sucesso"),
         @ApiResponse(responseCode = "400", description = "Parâmetros de data inválidos")
     })
+    
     @GetMapping
     public DelayStatsResponse calcularEstatisticas(
             @Parameter(
