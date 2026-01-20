@@ -2,12 +2,9 @@ package com.flightontime.service;
 
 import com.flightontime.dto.DelayStatsResponse;
 import com.flightontime.dto.DelayStatsState;
-import com.flightontime.model.DelayStats;
-import com.flightontime.repository.DelayStatsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.flightontime.model.Voo;
+import com.flightontime.repository.VooRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,49 +12,39 @@ import java.util.*;
 @Service
 public class DelayStatsService {
 
-    @Autowired
-    private DelayStatsRepository repository;
+    private final VooRepository vooRepository;
 
-    @Autowired
-    private WebClient.Builder webClient;
-
-    @Value("${fastapi.url}")
-    private String fastApiUrl;
+    public DelayStatsService(VooRepository vooRepository) {
+        this.vooRepository = vooRepository;
+    }
 
     public DelayStatsResponse calcularEstatisticasPeriodo(LocalDateTime inicio, LocalDateTime fim) {
-        List<DelayStats> voos = repository.findByDataPartidaBetween(inicio, fim);
+        List<Voo> voos = vooRepository.findByDepartureDateBetween(inicio, fim);
 
         List<Map<String, Object>> resultados = new ArrayList<>();
         List<Double> probabilidades = new ArrayList<>();
 
-        for (DelayStats voo : voos) {
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("companhia", voo.getCompanhia());
-            payload.put("origem", voo.getOrigem());
-            payload.put("destino", voo.getDestino());
-            payload.put("estado_origem", voo.getEstadoOrigem());
-            payload.put("estado_destino", voo.getEstadoDestino());
-            payload.put("distancia_km", voo.getDistanciaKm());
-            payload.put("data_partida", voo.getDataPartida().toString());
+        for (Voo voo : voos) {
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("companhia", voo.getCompany());
+            payload.put("origem", voo.getOrigin());
+            payload.put("destino", voo.getDestination());
+            payload.put("estado_origem", voo.getStateOrigin());
+            payload.put("estado_destino", voo.getStateDestitnation());
+            payload.put("distancia_km", voo.getDistanceKM());
+            payload.put("data_partida", voo.getDepartureDate());
 
-            Double probabilidade = webClient.build()
-                    .post()
-                    .uri(fastApiUrl)
-                    .bodyValue(payload)
-                    .retrieve()
-                    .bodyToMono(Double.class)
-                    .onErrorReturn(0.0)
-                    .block();
-
-            Map<String, Object> resultado = new HashMap<>();
+            Map<String, Object> resultado = new LinkedHashMap<>();
             resultado.put("voo", payload);
-            resultado.put("probabilidade", probabilidade);
+            resultado.put("previsao", voo.getPrediction());
+            resultado.put("probabilidade", voo.getProbability());
+
             resultados.add(resultado);
 
-            probabilidades.add(probabilidade);
+            // probability pode ser null se tiver dado antigo, então protege
+            probabilidades.add(Optional.ofNullable(voo.getProbability()).orElse(0.0));
         }
 
-        // cálculos estatísticos
         double media = probabilidades.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
         double min = probabilidades.stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
         double max = probabilidades.stream().mapToDouble(Double::doubleValue).max().orElse(0.0);
@@ -80,31 +67,14 @@ public class DelayStatsService {
     }
 
     public List<DelayStatsState> calcularPorEstado(LocalDateTime inicio, LocalDateTime fim) {
-        List<DelayStats> voos = repository.findByDataPartidaBetween(inicio, fim);
+        List<Voo> voos = vooRepository.findByDepartureDateBetween(inicio, fim);
 
         Map<String, List<Double>> grupos = new HashMap<>();
 
-        for (DelayStats voo : voos) {
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("companhia", voo.getCompanhia());
-            payload.put("origem", voo.getOrigem());
-            payload.put("destino", voo.getDestino());
-            payload.put("estado_origem", voo.getEstadoOrigem());
-            payload.put("estado_destino", voo.getEstadoDestino());
-            payload.put("distancia_km", voo.getDistanciaKm());
-            payload.put("data_partida", voo.getDataPartida().toString());
-
-
-            Double probabilidade = webClient.build()
-                    .post()
-                    .uri(fastApiUrl)
-                    .bodyValue(payload)
-                    .retrieve()
-                    .bodyToMono(Double.class)
-                    .onErrorReturn(0.0)
-                    .block();
-
-            grupos.computeIfAbsent(voo.getEstadoOrigem(), k -> new ArrayList<>()).add(probabilidade);
+        for (Voo voo : voos) {
+            String estado = voo.getStateOrigin();
+            double prob = Optional.ofNullable(voo.getProbability()).orElse(0.0);
+            grupos.computeIfAbsent(estado, k -> new ArrayList<>()).add(prob);
         }
 
         List<DelayStatsState> estatisticas = new ArrayList<>();
@@ -113,12 +83,18 @@ public class DelayStatsService {
             double media = probs.stream().mapToDouble(Double::doubleValue).average().orElse(0);
             double min = probs.stream().mapToDouble(Double::doubleValue).min().orElse(0);
             double max = probs.stream().mapToDouble(Double::doubleValue).max().orElse(0);
-            double variancia = probs.stream().mapToDouble(p -> Math.pow(p - media, 2)).sum() / probs.size();
+
+            double variancia = probs.stream()
+                    .mapToDouble(p -> Math.pow(p - media, 2))
+                    .sum() / (probs.isEmpty() ? 1 : probs.size());
+
             double desvio = Math.sqrt(variancia);
 
-            DelayStatsState stats = new DelayStatsState(entry.getKey(), probs.size(), media, min, max, desvio);
-            estatisticas.add(stats);
+            estatisticas.add(new DelayStatsState(entry.getKey(), probs.size(), media, min, max, desvio));
         }
+
+        // (opcional) ordenar por totalFlights desc para ficar mais bonito
+        estatisticas.sort(Comparator.comparingLong(DelayStatsState::getTotalFlights).reversed());
 
         return estatisticas;
     }
