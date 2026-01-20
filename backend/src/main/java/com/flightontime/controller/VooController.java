@@ -38,7 +38,7 @@ public class VooController {
 
     @PostMapping
     public ResponseEntity<VooResponse> predict(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = VooRequest.class), examples = @ExampleObject(value = "{\"companhia\":\"AA\",\"origem\":\"ABQ\",\"destino\":\"ATL\",\"estado_origem\":\"New Mexico\",\"estado_destino\":\"Georgia\",\"distancia_km\":2040,\"data_partida\":\"2026-01-15T10:00:00\"}"))) @Valid @RequestBody VooRequest request) {
+            @Valid @RequestBody VooRequest request) {
         return ResponseEntity.ok(vooService.predict(request));
     }
 }
