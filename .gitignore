@@ -1,4 +1,5 @@
 # Java / Maven
+target/
 **/target/
 *.iml
 *.log
@@ -17,9 +18,16 @@ __pycache__/
 env/
 venv/
 
+# Env files
+.env
+.env.*
+
 # DS
 datascience/notebooks/.ipynb_checkpoints/
+
+# Se quiser versionar o modelo:
 *.joblib
+!datascience/model/*.joblib
 
 # Sistema
 .DS_Store
